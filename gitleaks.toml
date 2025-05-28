@@ -17,21 +17,25 @@ commits = []
 # But you MUST include built-in rules if you want detections.
 #  (array of tables)
 [[rules]]
+id = "generic-api-key"
 description = "Generic API Key"
 regex = '''(?i)(api[_-]?key|secret|token)[^a-z0-9]*[a-z0-9]{16,45}'''
 tags = ["key", "API"]
 
 [[rules]]
+id = "aws-access-key-id"
 description = "AWS Access Key ID"
 regex = '''AKIA[0-9A-Z]{16}'''
 tags = ["AWS"]
 
 [[rules]]
+id = "aws-secret-access-key"
 description = "AWS Secret Access Key"
 regex = '''(?i)aws(.{0,20})?(?-i)['\"][0-9a-zA-Z\/+]{40}['\"]'''
 tags = ["AWS"]
 
 [[rules]]
+id = "slack-token"
 description = "Slack Token"
 regex = '''xox[baprs]-([0-9a-zA-Z]{10,48})'''
 tags = ["slack", "token"]
