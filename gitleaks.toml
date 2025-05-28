@@ -1,6 +1,7 @@
 title = "Gitleaks Configuration"
 description = "Scan for secrets in source code"
 
+#  (single table)
 [allowlist]
 # Ignore node_modules and test coverage folders
 paths = [
@@ -12,10 +13,9 @@ paths = [
 # Optional: ignore certain commits (SHA) if you want
 commits = []
 
-[rules]
 # You can define custom rules or rely on built-in rules.
 # But you MUST include built-in rules if you want detections.
-
+#  (array of tables)
 [[rules]]
 description = "Generic API Key"
 regex = '''(?i)(api[_-]?key|secret|token)[^a-z0-9]*[a-z0-9]{16,45}'''
