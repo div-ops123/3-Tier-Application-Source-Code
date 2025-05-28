@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     // Makes sure tools are available in the pipeline PATH
-    tools { 
+    tools {
         nodejs 'node18'  // matches the name in Jenkins > Manage Jenkins > Global Tool Configuration
     }
 
@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps{
-                echo "Cloning repository ..."
+                echo "Cloning App repository ..."
                 checkout scm
             }
         }
