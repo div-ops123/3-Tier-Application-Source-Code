@@ -48,7 +48,7 @@ pipeline {
 
         stage('Secret Scan') {
             steps {
-                echo "Scanning for scerets..."
+                echo "Scanning for scerets ..."
                 sh 'gitleaks detect --source . --config=gitleaks.toml'
                 // Or use official config: gitleaks config --show > gitleaks.toml
             }
