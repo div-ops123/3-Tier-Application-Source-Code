@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    // Makes sure tools are available in the pipeline PATH
+    tools {
+        nodejs 'node18'  // matches the name in Jenkins > Manage Jenkins > Global Tool Configuration
+    }
+
     environment {
         DOCKER_REGISTRY = "http://13.246.180.57:5001"   // Nexus IP on created repo port
         // IMAGE_NAME =
@@ -15,11 +20,11 @@ pipeline {
             }
         }
 
-        // ESLint checks for code quality and bugs in your JavaScript/React code.
+        // ESLint checks for code quality and bugs in your React code.
         // Prettier makes sure your code follows consistent formatting.
         stage('Lint (ESLint + Prettier)') {
             steps {
-                dir('frontend') { // Navigate into the frontend directory
+                dir('frontend') { // Navigate into the frontend directory. Because only frontend is built on React
                     echo "Installing dependencies for linting..."
                     sh 'npm install'
 
