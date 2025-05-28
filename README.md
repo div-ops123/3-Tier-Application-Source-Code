@@ -20,3 +20,31 @@ Fix:
 I used the Short-Term solution because i do not expect frequent updates
 
 ---
+
+# Jenkinsfile
+| Stage              | Description                  |
+| ------------------ | ---------------------------- |
+| `checkout`         | Pull from GitHub             |
+| `lint`             | Run ESLint / Prettier        |
+| `unit test`        | Run Jest + Pytest            |
+| `code scan`        | Run SonarQube analysis       |
+| `sca scan`         | OWASP dependency-check       |
+| `secrets`          | Run Gitleaks                 |
+| `docker build`     | Build Flask + React          |
+| `docker scan`      | Scan Docker image with Trivy |
+| `docker push`      | Push image to Nexus          |
+| `update manifest`  | Replace image tag in YAML    |
+| `commit to GitOps` | Git push updated manifest    |
+| `notify`           | Email build result           |
+
+## ✅ Bonus Advice for Later
+🧠 Move your app (frontend/, backend/, docker-compose.yaml) to a folder like /app, keep CI at root
+
+## For Lint stage:
+In frontend/ directory, ensure this is included in package.json:
+```json
+"scripts": {
+  "lint": "eslint .",
+  "format": "prettier --check ."
+}
+```
