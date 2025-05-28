@@ -1,5 +1,5 @@
 // src/services/api.js
-import API_URL from '../config/api';
+import API_URL from "../config/api";
 
 export const fetchTopics = async () => {
   try {
@@ -9,7 +9,7 @@ export const fetchTopics = async () => {
     }
     return await response.json();
   } catch (error) {
-    console.error('Error fetching topics:', error);
+    console.error("Error fetching topics:", error);
     throw error;
   }
 };
@@ -18,9 +18,9 @@ export const fetchTopics = async () => {
 export const createTopic = async (topicData) => {
   try {
     const response = await fetch(`${API_URL}/topics`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(topicData),
     });
@@ -29,7 +29,7 @@ export const createTopic = async (topicData) => {
     }
     return await response.json();
   } catch (error) {
-    console.error('Error creating topic:', error);
+    console.error("Error creating topic:", error);
     throw error;
   }
 };

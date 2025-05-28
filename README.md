@@ -41,7 +41,7 @@ I used the Short-Term solution because i do not expect frequent updates
 1. Move your app (frontend/, backend/, docker-compose.yaml) to a folder like /app, keep CI at root.
 2. add [NodeJS tool + cache + tools block] to avoid calling npm install every time from scratch.
 
-## For Lint stage:
+## Stage 1: Lint:
 In frontend/ directory, ensure this is included in package.json:
 ```json
 "scripts": {

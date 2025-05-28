@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Papa from 'papaparse';
-import API_URL from '../config/api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Papa from "papaparse";
+import API_URL from "../config/api";
 
 function QuestionManager() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    topic_slug: '',
-    question_text: '',
-    options: ['', '', '', ''],
-    correct_answer: 0
+    topic_slug: "",
+    question_text: "",
+    options: ["", "", "", ""],
+    correct_answer: 0,
   });
   const [csvFile, setCsvFile] = useState(null);
   const [message, setMessage] = useState(null);
@@ -17,18 +17,18 @@ function QuestionManager() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleOptionChange = (index, value) => {
     const newOptions = [...formData.options];
     newOptions[index] = value;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      options: newOptions
+      options: newOptions,
     }));
   };
 
@@ -37,28 +37,31 @@ function QuestionManager() {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/quiz/questions`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Question added successfully!' });
+        setMessage({ type: "success", text: "Question added successfully!" });
         setFormData({
-          topic_slug: '',
-          question_text: '',
-          options: ['', '', '', ''],
-          correct_answer: 0
+          topic_slug: "",
+          question_text: "",
+          options: ["", "", "", ""],
+          correct_answer: 0,
         });
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to add question' });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to add question",
+        });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Error adding question' });
+      setMessage({ type: "error", text: "Error adding question" });
     } finally {
       setLoading(false);
     }
@@ -72,7 +75,7 @@ function QuestionManager() {
   const handleBulkUpload = async (e) => {
     e.preventDefault();
     if (!csvFile) {
-      setMessage({ type: 'error', text: 'Please select a CSV file' });
+      setMessage({ type: "error", text: "Please select a CSV file" });
       return;
     }
 
@@ -82,26 +85,26 @@ function QuestionManager() {
         header: true,
         skipEmptyLines: true,
         complete: async (results) => {
-          console.log('Parsed CSV:', results.data);
-          
+          console.log("Parsed CSV:", results.data);
+
           const questions = results.data
-            .filter(row => row.topic_slug && row.question_text) // Filter out empty rows
-            .map(row => ({
+            .filter((row) => row.topic_slug && row.question_text) // Filter out empty rows
+            .map((row) => ({
               topic_slug: row.topic_slug.trim(),
               question_text: row.question_text.trim(),
               options: [
-                row.option1 ? row.option1.trim() : '',
-                row.option2 ? row.option2.trim() : '',
-                row.option3 ? row.option3.trim() : '',
-                row.option4 ? row.option4.trim() : ''
+                row.option1 ? row.option1.trim() : "",
+                row.option2 ? row.option2.trim() : "",
+                row.option3 ? row.option3.trim() : "",
+                row.option4 ? row.option4.trim() : "",
               ],
-              correct_answer: parseInt(row.correct_answer)
+              correct_answer: parseInt(row.correct_answer),
             }));
 
           if (questions.length === 0) {
             setMessage({
-              type: 'error',
-              text: 'No valid questions found in CSV file'
+              type: "error",
+              text: "No valid questions found in CSV file",
             });
             setLoading(false);
             return;
@@ -109,54 +112,54 @@ function QuestionManager() {
 
           try {
             const response = await fetch(`${API_URL}/quiz/questions/bulk`, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
-              body: JSON.stringify(questions)
+              body: JSON.stringify(questions),
             });
 
             const data = await response.json();
 
             if (response.ok) {
               setMessage({
-                type: 'success',
+                type: "success",
                 text: `Successfully added ${data.success} questions. Failed: ${data.failed}${
-                  data.errors ? '\n\nErrors:\n' + data.errors.join('\n') : ''
-                }`
+                  data.errors ? "\n\nErrors:\n" + data.errors.join("\n") : ""
+                }`,
               });
             } else {
               setMessage({
-                type: 'error',
+                type: "error",
                 text: `Upload failed: ${data.error}${
-                  data.errors ? '\n\nErrors:\n' + data.errors.join('\n') : ''
-                }`
+                  data.errors ? "\n\nErrors:\n" + data.errors.join("\n") : ""
+                }`,
               });
             }
           } catch (error) {
             setMessage({
-              type: 'error',
-              text: 'Error uploading questions: ' + error.message
+              type: "error",
+              text: "Error uploading questions: " + error.message,
             });
           }
         },
         error: (error) => {
           setMessage({
-            type: 'error',
-            text: 'Error parsing CSV: ' + error.message
+            type: "error",
+            text: "Error parsing CSV: " + error.message,
           });
-        }
+        },
       });
     } catch (error) {
       setMessage({
-        type: 'error',
-        text: 'Error processing file: ' + error.message
+        type: "error",
+        text: "Error processing file: " + error.message,
       });
     } finally {
       setLoading(false);
       setCsvFile(null);
       // Reset the file input
-      document.querySelector('input[type="file"]').value = '';
+      document.querySelector('input[type="file"]').value = "";
     }
   };
 
@@ -165,9 +168,13 @@ function QuestionManager() {
       <h1 className="text-3xl font-bold mb-8">Question Management</h1>
 
       {message && (
-        <div className={`p-4 mb-6 rounded ${
-          message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-        }`}>
+        <div
+          className={`p-4 mb-6 rounded ${
+            message.type === "success"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
           {message.text}
         </div>
       )}
@@ -235,7 +242,7 @@ function QuestionManager() {
               disabled={loading}
               className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
             >
-              {loading ? 'Adding...' : 'Add Question'}
+              {loading ? "Adding..." : "Add Question"}
             </button>
           </form>
         </div>
@@ -247,7 +254,8 @@ function QuestionManager() {
             <div>
               <label className="block mb-1">Upload CSV File:</label>
               <p className="text-sm text-gray-600 mb-2">
-                Format: topic_slug,question_text,option1,option2,option3,option4,correct_answer
+                Format:
+                topic_slug,question_text,option1,option2,option3,option4,correct_answer
               </p>
               <input
                 type="file"
@@ -263,7 +271,7 @@ function QuestionManager() {
               disabled={loading || !csvFile}
               className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-green-300"
             >
-              {loading ? 'Uploading...' : 'Upload CSV'}
+              {loading ? "Uploading..." : "Upload CSV"}
             </button>
           </form>
 
@@ -271,15 +279,17 @@ function QuestionManager() {
           <div className="mt-4">
             <h3 className="font-bold mb-2">CSV Template:</h3>
             <pre className="bg-gray-100 p-2 rounded text-sm overflow-x-auto">
-              topic_slug,question_text,option1,option2,option3,option4,correct_answer{'\n'}
-              docker,What is Docker?,A containerization platform,A database,A language,An OS,0
+              topic_slug,question_text,option1,option2,option3,option4,correct_answer
+              {"\n"}
+              docker,What is Docker?,A containerization platform,A database,A
+              language,An OS,0
             </pre>
           </div>
         </div>
       </div>
 
       <button
-        onClick={() => navigate('/')}
+        onClick={() => navigate("/")}
         className="mt-6 bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
       >
         Back to Home

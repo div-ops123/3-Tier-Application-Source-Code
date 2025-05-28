@@ -1,9 +1,9 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './components/Home';
-import Quiz from './components/Quiz';
-import QuestionManager from './components/QuestionManager';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./components/Home";
+import Quiz from "./components/Quiz";
+import QuestionManager from "./components/QuestionManager";
 
 function App() {
   return (

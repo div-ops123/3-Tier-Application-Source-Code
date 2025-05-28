@@ -36,6 +36,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Unit Tests') {
+            steps {
+                echo "Running unit tests..."
+                dir('frontend') { sh 'npm test -- --coverage' }
+                dir('backend') { sh 'pytest --cov=.' }
+            }
+        }
     }
 
     post {

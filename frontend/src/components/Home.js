@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import API_URL from '../config/api';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import API_URL from "../config/api";
 
 function Home() {
   const [topics, setTopics] = useState([]);
@@ -12,11 +12,11 @@ function Home() {
       try {
         setLoading(true);
         const response = await fetch(`${API_URL}/topics`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
         });
 
         if (!response.ok) {
@@ -24,10 +24,10 @@ function Home() {
         }
 
         const data = await response.json();
-        console.log('Fetched topics:', data);
+        console.log("Fetched topics:", data);
         setTopics(data);
       } catch (err) {
-        console.error('Error fetching topics:', err);
+        console.error("Error fetching topics:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -58,14 +58,21 @@ function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Welcome to DevOps Learning Platform</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">
+        Welcome to DevOps Learning Platform
+      </h1>
       <p className="text-lg mb-8 text-center">
         Master DevOps concepts through interactive learning and quizzes.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {topics.map(topic => (
-          <div key={topic.id} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-bold mb-2 text-gray-800">{topic.title}</h2>
+        {topics.map((topic) => (
+          <div
+            key={topic.id}
+            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-2xl font-bold mb-2 text-gray-800">
+              {topic.title}
+            </h2>
             <p className="text-gray-600 mb-4">{topic.description}</p>
             <Link
               to={`/quiz/${topic.id}`}

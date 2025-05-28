@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -13,7 +13,10 @@ function Navbar() {
             <Link to="/" className="text-white hover:text-gray-300">
               Home
             </Link>
-            <Link to="/manage-questions" className="text-white hover:text-gray-300">
+            <Link
+              to="/manage-questions"
+              className="text-white hover:text-gray-300"
+            >
               Manage Questions
             </Link>
           </div>
