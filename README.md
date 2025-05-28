@@ -38,7 +38,8 @@ I used the Short-Term solution because i do not expect frequent updates
 | `notify`           | Email build result           |
 
 ## ✅ Bonus Advice for Later
-🧠 Move your app (frontend/, backend/, docker-compose.yaml) to a folder like /app, keep CI at root
+1. Move your app (frontend/, backend/, docker-compose.yaml) to a folder like /app, keep CI at root.
+2. add [NodeJS tool + cache + tools block] to avoid calling npm install every time from scratch.
 
 ## For Lint stage:
 In frontend/ directory, ensure this is included in package.json:

@@ -32,7 +32,7 @@ pipeline {
                     sh 'npm run lint'
 
                     echo "Running Prettier check..."
-                    sh 'npx run format'
+                    sh 'npm run format'
                 }
             }
         }
