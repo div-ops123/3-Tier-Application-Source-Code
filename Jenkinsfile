@@ -53,6 +53,13 @@ pipeline {
                 // Or use official config: gitleaks config --show > gitleaks.toml
             }
         }
+
+        stage('Filesystem Scan') {
+            steps {
+                echo "Scanning Filesystem..."
+                sh 'trivy fs . --exit-code 1 --severity HIGH,CRITICAL'
+            }
+        }
     }
 
     post {
