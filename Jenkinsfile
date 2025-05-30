@@ -10,6 +10,10 @@ pipeline {
         DOCKER_REGISTRY = "http://13.246.180.57:5001"   // Nexus IP on created repo port
         // IMAGE_NAME =
         // IMAGE_TAG = "${env.BUILD_ID}"
+
+        // Telegram configuration
+        TELEGRAM_BOT_TOKEN = credentials('telegram-bot-token')
+        TELEGRAM_CHAT_ID = credentials('telegram-chat-id')
     }
 
     stages {
@@ -61,26 +65,51 @@ pipeline {
                 sh 'trivy fs . --exit-code 1 --severity HIGH,CRITICAL --ignorefile .trivyignore || true'
             }
         }
+
+        stage('Static Code Analysis') {
+            steps {
+                echo "Static Code Ananlysing..."
+                // Refers to a SonarQube server configuration name that you define in Jenkins (under Manage Jenkins → Configure System → SonarQube Servers).
+                withSonarQubeEnv('MySonarQube') { sh 'sonar-scanner' }
+            }
+        }
+
+        stage("Quality Gate") {
+            steps {
+                echo "Waiting for SonarQube results..."
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
     }
 
     post {
         success {
-            // echo "Pipeline completed successfully! Image: ${DOCKER_REGISTRY }/${IMAGE_NAME}:${IMAGE_TAG}"
-            echo "Pipeline completed successfully!"
+            // echo "CI Pipeline for 'DevOps Learning Platform App' completed successfully! Image: ${DOCKER_REGISTRY }/${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "CI Pipeline for 'DevOps Learning Platform App' completed successfully!"
         }
         
-        // failure {
-        //     emailext (
-        //         to: 'divinenwadigo06@gmail.com',
-        //         subject: "❌ Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-        //         body: """
-        //         <p><b>Build Failed!</b></p>
-        //         <p>Job: ${env.JOB_NAME}</p>
-        //         <p>Build Number: ${env.BUILD_NUMBER}</p>
-        //         <p>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-        //         """,
-        //         mimeType: 'text/html'
-        //     )
-        // }
+        failure {
+            script {
+                env.CURRENT_BUILD_NUMBER = "${currentBuild.number}"
+                env.GIT_MESSAGE = sh(returnStdout: true, script: "git log -n 1 --format=%s ${GIT_COMMIT}").trim()
+                env.GIT_AUTHOR = sh(returnStdout: true, script: "git log -n 1 --format=%ae ${GIT_COMMIT}").trim()
+                env.GIT_COMMIT_SHORT = sh(returnStdout: true, script: "git rev-parse --short ${GIT_COMMIT}").trim()
+                env.GIT_INFO = "Branch(Version): ${GIT_BRANCH}\nLast Message: ${GIT_MESSAGE}\nAuthor: ${GIT_AUTHOR}\nCommit: ${GIT_COMMIT_SHORT}"
+                env.TEXT_BREAK = "--------------------------------------------------------------"
+                env.TEXT_FAILURE_BUILD = "${TEXT_BREAK}\n${GIT_INFO}\n${JOB_NAME}\nBuild #${CURRENT_BUILD_NUMBER} Failed."
+            }
+            // Calls Telegram API directly, no plugin required
+            // sh "curl --location --request POST 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage' --form text='${TEXT_FAILURE_BUILD}' --form chat_id='${TELEGRAM_CHAT_ID}'"
+            sh """
+            curl --location --request POST 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage' \
+            --form "text=${TEXT_FAILURE_BUILD}" \
+            --form "chat_id=${TELEGRAM_CHAT_ID}" \
+            --form "parse_mode=Markdown"
+            """
+
+        }
     }
 }
