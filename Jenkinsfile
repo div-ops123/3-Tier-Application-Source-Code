@@ -8,8 +8,9 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = "http://13.246.180.57:5001"   // Nexus IP on created repo port
-        // IMAGE_NAME =
-        // IMAGE_TAG = "${env.BUILD_ID}"
+        NEXUS_PASSWORD =
+        NEXUS_USERNAME =
+        IMAGE_TAG = "${env.BUILD_ID}"
 
         // Telegram configuration
         TELEGRAM_BOT_TOKEN = credentials('telegram-bot-token')
@@ -80,6 +81,48 @@ pipeline {
                 timeout(time: 1, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
+            }
+        }
+
+        stage('Dockerfile Lint') {
+            steps {
+                echo "Analyzing Dockerfiles..."
+                dir('frontend') { sh 'hadolint Dockerfile' }
+                dir('backend') { sh 'hadolint Dockerfile' }
+            }
+        }
+
+        stage('Build Frontend + Backend Images') {
+            steps {
+                echo 'Building Images...'
+                dir('frontend') { sh 'docker build -t $DOCKER_REGISTRY/frontend-devops-learning-app:$IMAGE_TAG .' }
+                dir('backend') { sh 'docker build -t $DOCKER_REGISTRY/backend-devops-learning-app:$IMAGE_TAG .' }
+            }
+        }
+
+        stage('Image Scan') {
+            steps {
+                echo 'Scanning Docker Images...'
+                sh 'trivy image $DOCKER_REGISTRY/frontend-devops-learning-app:$IMAGE_TAG'
+                sh 'trivy image $DOCKER_REGISTRY/backend-devops-learning-app:$IMAGE_TAG'
+            }
+        }
+
+        stage('Push Images to Nexus') {
+            steps {
+                echo 'Pushing images to Nexus Private Repo...'
+                sh 'docker login $DOCKER_REGISTRY -u $NEXUS_USERNAME -p $NEXUS_PASSWORD'
+                sh 'docker push $DOCKER_REGISTRY/frontend-devops-learning-app:$IMAGE_TAG'
+                sh 'docker push $DOCKER_REGISTRY/backend-devops-learning-app:$IMAGE_TAG'
+            }
+        }
+
+        stage('Update Manifest Repo') {
+            steps {
+                echo 'Updating Manifest Repo...'
+                sh 'git clone https://github.com/div-ops123/hybrid-manifests.git'
+                sh 'cd hybrid-manifests/devops-learning-manifest'
+                // patch image
             }
         }
 
