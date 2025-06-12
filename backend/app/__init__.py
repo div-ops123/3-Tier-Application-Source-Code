@@ -33,4 +33,9 @@ def create_app(config_class=Config):
     app.register_blueprint(topic_bp)
     app.register_blueprint(quiz_bp)
     app.register_blueprint(api_bp) 
+
+    #  Register the /metrics route
+    from .routes.metrics_routes import register_metrics_route
+    register_metrics_route(app)
+    
     return app

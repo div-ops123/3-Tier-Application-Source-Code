@@ -11,6 +11,10 @@
   - **ASCP and `SecretProviderClass`**: Syncs Parameter Store secrets (`/devops-learning/db-username`, `/devops-learning/db-password`, `/devops-learning/db-name`, `/devops-learning/secret-key`) to a Kubernetes `Secret` (`devops-learning-secrets`).
   - **Environment Variables**: The `Deployment` and `Job` reference `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`, and `SECRET_KEY` from `devops-learning-secrets`
 
+
+http://localhost:8000/metrics
+Prometheus will scrape it and see all default Python metrics like memory, GC time, and more.  
+
 **Issues:**
 1. nginx.conf
 Fix:
